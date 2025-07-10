@@ -1,4 +1,4 @@
-import mongoose, { model, models,InferSchemaType } from "mongoose";
+import mongoose, { model, models,InferSchemaType ,HydratedDocument} from "mongoose";
 import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema(
@@ -16,18 +16,20 @@ const userSchema = new mongoose.Schema(
     emailVerified: { type: Date },
     role: { type: String, enum: ["user", "admin"], default: "user" },
     bio: { type: String, default: "" },
+      githubId: { type: String },
+    googleId: { type: String },
+    linkedinId: { type: String },
   },
   { timestamps: true }
 );
 
 // Hash password before saving to database
-userSchema.pre("save",async function(this:any,next){
-    if(this.isModified("password")){
-          this.password = await bcrypt.hash(this.password, 10);
-
+userSchema.pre("save", async function (this: HydratedDocument<UserType>,next) {
+    if (this.isModified("password") && this.password) {
+        this.password = await bcrypt.hash(this.password, 10);
     }
-next()
-})
+    next()
+});
 export type UserType = InferSchemaType<typeof userSchema>;
 
 const User = models?.User || model<UserType>("User", userSchema);
