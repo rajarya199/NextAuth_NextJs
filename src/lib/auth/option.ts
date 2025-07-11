@@ -3,7 +3,7 @@ import { NextAuthOptions } from "next-auth"
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import LinkedInProvider from "next-auth/providers/linkedin";
-import { connectToDatabase } from "@/utils/db";
+import { connectToDatabase } from "@/lib/db";
 import User from "@/models/user";
 import bcrypt from "bcryptjs";
 export const authOptions:NextAuthOptions={
@@ -17,8 +17,10 @@ export const authOptions:NextAuthOptions={
 
             },
             async authorize(credentials){
-                  if(!credentials?.email || !credentials?.password) {
-                throw new Error("Email and password are required");
+                  if((!credentials?.email && !credentials?.username )|| !credentials?.password) {
+                    console.error('Email or username and password are required')
+                throw new Error("Email or username and password are required");
+
                 
             }
             try{
@@ -71,7 +73,31 @@ export const authOptions:NextAuthOptions={
         async signIn({user,account,profile}){
 try{
                     await connectToDatabase()
-      const existingUser = await User.findOne({ email: user.email });
+
+
+                  // Determine the provider-specific ID field
+  let providerIdField = null;
+  let providerIdValue = null;
+  if (account.provider === "github") {
+    providerIdField = "githubId";
+    providerIdValue = profile.id;
+  } else if (account.provider === "google") {
+    providerIdField = "googleId";
+    providerIdValue = profile.sub || profile.id;
+  } else if (account.provider === "linkedin") {
+    providerIdField = "linkedinId";
+    providerIdValue = profile.id;
+  }    
+
+  // Try to find user by email or provider-specific ID
+  const existingUser = await User.findOne({
+    $or: [
+      { email: user.email },
+      //if providerfiled-githubId then set githubId ->profile.id
+      providerIdField ? { [providerIdField]: providerIdValue } : {} 
+    ]
+  });
+
  if (!existingUser) {
         await User.create({
           email: user.email,
@@ -81,8 +107,18 @@ try{
           image: user.image,
           provider: account?.provider,
           emailVerified: new Date(),
+           role: "user", 
+      bio: "", 
+      //if eg github provider set githubId-profileID
+            ...(providerIdField && { [providerIdField]: providerIdValue })
         });
+      } else if( providerIdField &&
+    !existingUser[providerIdField]){
+           // Update user with provider ID if not set
+    existingUser[providerIdField] = providerIdValue;
+    await existingUser.save();
       }
+      console.log('sucessfully login')
             return true;
 
 }
@@ -95,6 +131,8 @@ catch(error){
         async jwt({token,user}){
             if(user){
                 token.id=user.id //keep user id in token
+                    token.role = user.role || "user";
+
             }
             return token
         },
