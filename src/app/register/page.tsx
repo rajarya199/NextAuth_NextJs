@@ -3,7 +3,7 @@ import React,{useState} from 'react'
 import SocialButton from "@/components/SocialButton";
 import { useRouter } from "next/navigation";
 import axios from 'axios';
-
+import Link from 'next/link';
 import {
   EyeIcon,
   EyeOffIcon,
@@ -211,12 +211,12 @@ setLoading(false)
          <div className="mt-6 text-center text-sm">
         <p className="text-gray-600 dark:text-gray-400">
           Already have an account?{' '}
-          <a
-            href="#"
+          <Link
+            href="/login"
             className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
           >
             Sign in
-          </a>
+          </Link>
         </p>
       </div>
             <div className="my-8 w-full max-w-md">
