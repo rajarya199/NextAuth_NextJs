@@ -10,6 +10,7 @@ import {
   LockIcon,
 } from 'lucide-react'
 import SocialButton from '@/components/SocialButton';
+import Link from 'next/link';
 
 const LoginPage = () => {
       const router=useRouter()
@@ -142,16 +143,17 @@ const handleSubmit=async(e: React.FormEvent)=>{
              {loading ? "Signing..." : " Sign in"}
            
           </button>
+        
+        </form>
           <p className="text-sm font-light text-gray-500 dark:text-gray-400">
             Don’t have an account yet?{" "}
-            <a
-              href="#"
+            <Link
+              href="/register"
               className="font-medium text-blue-600 hover:underline dark:text-blue-500"
             >
               Sign up
-            </a>
+            </Link>
           </p>
-        </form>
 
                 <div className="my-8 w-full max-w-md">
                 <div className="relative mb-4">
