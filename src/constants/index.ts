@@ -12,8 +12,8 @@ export const menuItem=[
         path:"/"
     },
      {
-        label:"Features",
-        path:"/"
+        label:"Profile",
+        path:"/profile"
     },
    
 
