@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from 'react'
-import {  MenuIcon, XIcon,Haze,House, } from 'lucide-react'
+import {  MenuIcon, XIcon,Haze,House, UserIcon, } from 'lucide-react'
 import Link from 'next/link'
 import { menuItem } from '@/constants'
 import { useSession, signOut } from "next-auth/react"
@@ -13,6 +13,8 @@ const Navbar = () => {
     setIsMenuOpen(!isMenuOpen)
   }
  const { data: session, status } = useSession()
+   const user = session?.user;
+
   const isLoggedIn = status === "authenticated"
   return (
     <nav className=" shadow-sm sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 dark:bg-gradient-to-b dark:from-gray-900 dark:to-black  backdrop-blur-md  border-b border-gray-200 dark:border-gray-800">
@@ -39,6 +41,45 @@ const Navbar = () => {
 
           {/* Right side: Login, Sign Up, ThemeSwitcher */}
           <div className="flex items-center space-x-4">
+
+          {/* user profile */}
+
+<div className='relative group'>
+  <button
+    className="text-gray-300 hover:text-white transition-colors"
+    aria-label="User account"
+  >
+    <UserIcon size={28} />
+  </button>
+  <div className="absolute right-0 top-full mt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+    <div className="bg-indigo-950 backdrop-blur-sm border border-gray-800 py-2 rounded-md">
+      {user && user.role === 'user' && (
+        <Link
+          href='/profile'
+          className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/70 transition-colors rounded"
+        >
+          Profile
+        </Link>
+      )}
+      {user && user.role === 'admin' && (
+        <Link
+          href='/admin/dashboard'
+          className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/70 transition-colors rounded"
+        >
+          Admin
+        </Link>
+      )}
+      <Link
+        href='/setting'
+        className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/70 transition-colors rounded"
+      >
+        Setting
+      </Link>
+    </div>
+  </div>
+</div>
+
+
             {/* Desktop buttons */}
             <div className="hidden md:flex items-center space-x-2">
               {isLoggedIn ? (
