@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from 'react'
-import { VideoIcon, MenuIcon, XIcon } from 'lucide-react'
+import {  MenuIcon, XIcon,Haze,House, } from 'lucide-react'
 import Link from 'next/link'
 import { menuItem } from '@/constants'
 import { useSession, signOut } from "next-auth/react"
@@ -20,7 +20,7 @@ const Navbar = () => {
         <div className="flex justify-between h-16 items-center">
           {/* Left side: Logo */}
           <div className="flex items-center">
-            <VideoIcon className="h-8 w-8 text-purple-600  dark:text-purple-500" />
+            <Haze className="h-8 w-8 text-purple-600  dark:text-purple-500" />
 
             <span className="ml-2 text-xl bg-gradient-to-r font-bold bg-clip-text  from-purple-600 to-indigo-600 dark:from-purple-400  dark:to-pink-500 text-transparent">
               NextAuth
